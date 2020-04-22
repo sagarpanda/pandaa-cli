@@ -1,0 +1,22 @@
+{
+  "name": "pandaa-cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "pandaa": "bin/pandaa"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.0.0",
+    "figlet": "^1.3.0",
+    "inquirer": "^7.1.0",
+    "minimist": "^1.2.5",
+    "ora": "^4.0.4"
+  }
+}
