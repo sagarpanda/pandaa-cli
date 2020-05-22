@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const Mustache = require('mustache');
+const mustache = require('mustache');
 
 const excludeList = ['.git', '.next', '.DS_Store', 'yarn.lock'];
 
@@ -13,35 +13,38 @@ module.exports = {
     return fs.existsSync(filePath);
   },
 
-  getAllFiles: (srcDir, level = 0) => {
-    let files = [];
-    if(level < 0) { return [] }
-    fs.readdirSync(srcDir).map(name => {
-      const fullpath = `${srcDir}/${name}`;
-      const isDir = fs.statSync(fullpath).isDirectory();
-      if(!excludeList.includes(name)) {
-        if(isDir) {
-          const temp = getAllFiles(fullpath, level - 1);
-          files = files.concat(temp);
-        } else {
-          files.push(fullpath);
+  getAllFiles: (dir, lvl = 0) => {
+    const getFiles = (srcDir, level) => {
+      let files = [];
+      if(level < 0) { return [] }
+      fs.readdirSync(srcDir).map(name => {
+        const fullpath = `${srcDir}/${name}`;
+        const isDir = fs.statSync(fullpath).isDirectory();
+        if(!excludeList.includes(name)) {
+          if(isDir) {
+            const temp = getFiles(fullpath, level - 1);
+            files = files.concat(temp);
+          } else {
+            const relPath = fullpath.replace(dir, '');
+            files.push(relPath);
+          }
         }
-      }
-    });
-    return files;
+      });
+      return files;
+    }
+    return getFiles(dir, lvl);
   },
 
-  generateFiles: () => {
-    // console.log(process.cwd(), __dirname)
-    const files = getAllFiles('/Users/sagarpanda/Projects/Misc/snoopy', 10);
-    files.forEach(item => {
-      const tpl = fs.readFileSync(
-        '/Users/sagarpanda/Projects/Misc/ucinema/a.js',
-        { encoding:'utf8', flag:'r' }
-      ); 
-      const rendered = Mustache.render(tpl, { name: 'Luke1' });
-      console.log(rendered);
-      //fs.writeFileSync("/Users/sagarpanda/Projects/Misc/ucinema/programming.txt", xxx); 
-    });
+  parseAndCopyFile: (srcFile, destFile, data) => {
+    const isExist = fs.existsSync(destFile);
+    if (isExist) {
+      console.log(`Error!!! ${srcFile} already exist.`)
+    } else {
+      const tpl = fs.readFileSync(srcFile, { encoding:'utf8', flag:'r' }); 
+      const rendered = mustache.render(tpl, data);
+      const dir = path.dirname(destFile);
+      fs.promises.mkdir(dir, { recursive: true })
+        .then(x => fs.promises.writeFile(destFile, rendered))
+    }
   }
 };

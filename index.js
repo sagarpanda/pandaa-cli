@@ -12,16 +12,20 @@ module.exports = () => {
   // console.log('cmd', cmd);
 
   switch (cmd) {
+    case 'create':
+      require('./cmds/create')(args);
+      break
+    
     case 'help':
-      require('./cmds/help')(args)
+      require('./cmds/help')(args);
       break
     
     case 'fetch':
-      require('./cmds/fetch')(args)
+      require('./cmds/fetch')(args);
       break
 
     case 'questions':
-      require('./cmds/questions')(args)
+      require('./cmds/questions')(args);
       break
     
     default:
